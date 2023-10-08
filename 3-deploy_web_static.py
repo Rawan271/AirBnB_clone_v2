@@ -3,10 +3,31 @@
 using created function deploy and pack"""
 from fabric.api import *
 import os
-do_pack = __import__('1-pack_web_static').do_pack
+from datetime import datetime
+from fabric.decorators import runs_once
+
 # do_deploy = __import__('2-do_deploy_web_static').do_deploy
 
-env.hosts = ['3.235.198.120', '3.239.50.204']
+env.hosts = ['34.232.69.7', '18.209.179.17']
+
+
+@runs_once
+def do_pack():
+    """Pack all the contents in the web_static directory
+    as a tar archive"""
+
+    try:
+        local("mkdir -p versions")
+        time = datetime.now()
+        date_string = '%Y%m%d%H%M%S'
+        date = time.strftime(date_string)
+
+        file_path = "versions/web_static_{}.tgz".format(date)
+        local("tar -czvf {} web_static".format(file_path))
+        return file_path
+
+    except Exception:
+        return None
 
 
 def deploy():
